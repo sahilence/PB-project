@@ -4,6 +4,8 @@
 library(GEOquery)
 library(limma)
 library(umap)
+library(hgu133plus2.db)
+library(clusterProfiler)
 
 # load series and platform data from GEO
 
