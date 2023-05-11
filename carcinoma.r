@@ -19,17 +19,17 @@ fvarLabels(gset) <- make.names(fvarLabels(gset))
 
 # group membership for all samples
 gsms <- paste0("100101100101110010101100001010X1011010000001101010",
-        "00000110111101001110100X10110011101010101011110001",
-        "10010000010100000011101010101101010100100010110110",
-        "10111100101010100011101111100111101010101010101010",
-        "11101010101010101010010001011011010101101101010110",
-        "11011011101010010101001010100010111001001110010000",
-        "11010101001010101001010100101011010101001011011001",
-        "01001010101010101010010X10101101011011100110101000",
-        "1001010110100X001010010101001001001010101101011000",
-        "10100101100101010010100001011111000111000101001010",
-        "10010100101010000001010100101010000001111010110110",
-        "1010010111010110101101100")
+               "00000110111101001110100X10110011101010101011110001",
+               "10010000010100000011101010101101010100100010110110",
+               "10111100101010100011101111100111101010101010101010",
+               "11101010101010101010010001011011010101101101010110",
+               "11011011101010010101001010100010111001001110010000",
+               "11010101001010101001010100101011010101001011011001",
+               "01001010101010101010010X10101101011011100110101000",
+               "1001010110100X001010010101001001001010101101011000",
+               "10100101100101010010100001011111000111000101001010",
+               "10010100101010000001010100101010000001111010110110",
+               "1010010111010110101101100")
 sml <- strsplit(gsms, split="")[[1]]
 
 # filter out excluded samples (marked as "X")
@@ -41,9 +41,9 @@ gset <- gset[ ,sel]
 ex <- exprs(gset)
 qx <- as.numeric(quantile(ex, c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
 LogC <- (qx[5] > 100) ||
-          (qx[6]-qx[1] > 50 && qx[2] > 0)
+  (qx[6]-qx[1] > 50 && qx[2] > 0)
 if (LogC) { ex[which(ex <= 0)] <- NaN
-  exprs(gset) <- log2(ex) }
+exprs(gset) <- log2(ex) }
 
 # assign samples to groups and set up design matrix
 gs <- factor(sml)
@@ -65,13 +65,14 @@ fit2 <- contrasts.fit(fit, cont.matrix)
 fit2 <- eBayes(fit2, 0.01)
 tT <- topTable(fit2, adjust="fdr", sort.by="B", number=250)
 
-tT <- subset(tT, select=c("ID","adj.P.Val","P.Value","t","B","logFC"))
+tT <- subset(tT, select=c("Name","adj.P.Val","P.Value","t","B","logFC"))
 
 
 results <- tT[abs(tT$logFC)>0.75 & tT$adj.P.Val < 0.05, ]  
 
 de_genes <- results[,1]
-gene_ids <- AnnotationDbi::select(hgu133plus2.db, keys = de_genes, columns = "SYMBOL", keytype = "PROBEID")
+de_genes
+gene_ids <- AnnotationDbi::select(hgu133plus2.db, keys = de_genes, columns = "SYMBOL", keytype = "SYMBOL")
 
 #perform the enrichment analysis
 go_results <- enrichGO(gene = gene_ids$SYMBOL,
